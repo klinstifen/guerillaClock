@@ -2,7 +2,7 @@
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 import time
 
-class gorillaClockDisplay(object):
+class guerillaClockDisplay(object):
     def __init__(self):
         self.options = RGBMatrixOptions()
         self.options.rows = 16
