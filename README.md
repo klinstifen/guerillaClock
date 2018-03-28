@@ -1,5 +1,5 @@
 # gorillaClock
-GorillaClock, a low cost countdown clock, provides bus arrival time by way of 16x32 RBG matrix backed by a Raspberry Pi Zero W.
+gorillaClock, a low cost countdown clock, provides bus arrival time by way of 16x32 RBG matrix backed by a Raspberry Pi Zero W.
 
 It is a $100 solution to a $25,000 problem.
 ## Description
