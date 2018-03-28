@@ -1,5 +1,5 @@
-# gorillaClock
-gorillaClock, a low cost countdown clock, provides bus arrival time by way of 16x32 RBG matrix backed by a Raspberry Pi Zero W.
+# guerillaClock
+guerillaClock, a low cost countdown clock, provides bus arrival time by way of 16x32 RBG matrix backed by a Raspberry Pi Zero W.
 
 It is a $100 solution to a $25,000 problem.
 ## Description
@@ -10,8 +10,8 @@ The Raspberry Pi Zero W connects to a local wifi network and pulls bus arrival t
 The display is controlled with hzeller's great [rpi-rgb-led-matrix repo](https://github.com/hzeller/rpi-rgb-led-matrix) project.  The [wiring.md](https://github.com/hzeller/rpi-rgb-led-matrix/blob/master/wiring.md) was especially helpful in creating a Pi HAT, utilizing the [Adafruit Perma Proto Bonnet](https://www.adafruit.com/product/3203).
 
 ## Scripts
-**gorillaClock.py**: Scrape the NYC MTA Bus Time API and gather information about a designated bus stop.
-**gorillaClockDisplay.py**: Display and scroll arrival time information on a 16x32 RGB matrix.
+**guerillaClock.py**: Scrape the NYC MTA Bus Time API and gather information about a designated bus stop.
+**guerillaClockDisplay.py**: Display and scroll arrival time information on a 16x32 RGB matrix.
 ## Parts
 * 1	×	[16x32 RGB LED Matrix](https://www.adafruit.com/product/420) - $24.95
 * 1	×	[Raspberry Pi Zero W](https://www.adafruit.com/product/3400) - $10

@@ -7,7 +7,7 @@ import dateutil.parser
 import pytz
 from time import strftime
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
-from gorillaClockDisplay import *
+from guerillaClockDisplay import *
 import logging
 
 #Config logging
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('--%(levelname)s--%(message)s')
 #file handler
-fileHandler = logging.FileHandler('gorillaclock.log')
+fileHandler = logging.FileHandler('guerillaclock.log')
 fileHandler.setFormatter(formatter)
 logger.addHandler(fileHandler)
 #Disable requests logging unless 'warning'
@@ -38,7 +38,7 @@ logger.debug('Bus Stop: %s', busStop)
 logger.debug('URL: %s', url)
 
 bussesEnroute = 0 #buses en-route
-GCD = gorillaClockDisplay()
+GCD = guerillaClockDisplay()
 logger.info('Initiating GCD...')
 GCD.initiate()
 nextBusInfo = {}
