@@ -91,10 +91,10 @@ while True:
                     nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
             else:
                 nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
-                
+
             #Reword if bus has arrived
             if distanceAway == 'at stop':
-                nextBusInfo['nArrivalTime'] = 'Arrived!'
+                nextBusInfo['nArrivalTime'] = 'Here!'
 
             logger.info('Bus %s Arrives in: %s', busRef, arrivalTime)
         if len(nextBusInfo):
