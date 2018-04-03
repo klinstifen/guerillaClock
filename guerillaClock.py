@@ -12,8 +12,8 @@ import logging
 
 #Config logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter('--%(levelname)s--%(message)s')
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('--%(levelname)s--%(message)s\n%(detail)s')
 #file handler
 fileHandler = logging.FileHandler('guerillaclock.log')
 fileHandler.setFormatter(formatter)
@@ -51,7 +51,7 @@ while True:
         logger.debug('ERROR: Could not connect to API. Retrying...')
         continue
     jsonData = response.json()
-    logger.debug('Raw JSON: %s', jsonData)
+    logger.debug('Raw JSON:', extra={'detail':jsonData})
     busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
     bussesEnroute = len(busStopData[0]['MonitoredStopVisit'])
     logger.info('Number of buses: %s', str(bussesEnroute))
@@ -91,7 +91,7 @@ while True:
                     nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
             else:
                 nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
-                
+
             #Reword if bus has arrived
             if distanceAway == 'at stop':
                 nextBusInfo['nArrivalTime'] = 'Arrived!'
