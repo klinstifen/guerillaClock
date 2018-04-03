@@ -13,7 +13,8 @@ The display is controlled with hzeller's great [rpi-rgb-led-matrix repo](https:/
 **README.md**: This file.
 **guerillaClock.py**: Scrape the NYC MTA Bus Time API and gather information about a designated bus stop.
 **guerillaClockDisplay.py**: Display and scroll arrival time information on a 16x32 RGB matrix.
-**piHAT_pinout.md**: Table explaining the pinout between the Raspberry Pi Zero W, Adafruit Bonnet, and 16x32 matrix
+**piHAT_pinout.md**: Table explaining the pinout between the Raspberry Pi Zero W, Adafruit Bonnet, and 16x32 matrix.
+
 ## Parts
 * 1	×	[16x32 RGB LED Matrix](https://www.adafruit.com/product/420) - $24.95
 * 1	×	[Raspberry Pi Zero W](https://www.adafruit.com/product/3400) - $10
