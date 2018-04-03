@@ -45,7 +45,11 @@ nextBusInfo = {}
 while True:
     logger.info('Begin main loop...')
     logger.info('Retrieving bus stop info...')
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except:
+            logger.debug('ERROR: Could not connect to API. Retrying...')
+            continue
     jsonData = response.json()
     logger.debug('Raw JSON: %s', jsonData)
     busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
