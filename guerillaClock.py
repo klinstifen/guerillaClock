@@ -42,21 +42,22 @@ GCD = guerillaClockDisplay()
 logger.info('Initiating GCD...')
 GCD.initiate()
 nextBusInfo = {}
+logger.info('Begin main loop...')
 while True:
-    logger.info('Begin main loop...')
     logger.info('Retrieving bus stop info...')
     try:
         response = requests.get(url)
     except:
-            logger.debug('ERROR: Could not connect to API. Retrying...')
-            continue
+        logger.debug('ERROR: Could not connect to API. Retrying...')
+        continue
     jsonData = response.json()
     logger.debug('Raw JSON: %s', jsonData)
     busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
     bussesEnroute = len(busStopData[0]['MonitoredStopVisit'])
     logger.info('Number of buses: %s', str(bussesEnroute))
 
-    while bussesEnroute > 0:
+    #Check if buses en-route
+    if bussesEnroute > 0:
         logger.info('Looping through buses...')
         for bus in busStopData[0]['MonitoredStopVisit']:
             routeName = bus['MonitoredVehicleJourney']['PublishedLineName']
@@ -85,13 +86,16 @@ while True:
             timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
             arrivalTime = str(timeTillDepart.seconds // 60 % 60) + " min."
 
-            if distanceAway == 'at stop':
-                arrivalTime = 'Arrived!'
             if len(nextBusInfo):
                 if arrivalTime < nextBusInfo["nArrivalTime"]:
                     nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
             else:
                 nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
+                
+            #Reword if bus has arrived
+            if distanceAway == 'at stop':
+                nextBusInfo['nArrivalTime'] = 'Arrived!'
+
             logger.info('Bus %s Arrives in: %s', busRef, arrivalTime)
         if len(nextBusInfo):
             logger.info('!!!!!!!!!!!!!!!!')
@@ -102,19 +106,10 @@ while True:
             logger.info('No busses en route...')
             GCD.nobus()
 
-        #Wait and check route again
-        time.sleep(10)
+    else:
+        logger.info('No buses en route..')
+        GCD.nobus()
 
-        logger.info('Retrieving bus stop info...')
-        response = requests.get(url)
-        jsonData = response.json()
-        logger.debug('Raw JSON: %s', jsonData)
-        busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
-        bussesEnroute = len(busStopData[0]['MonitoredStopVisit'])
-        logger.info('Number of buses: %s', str(bussesEnroute))
-        nextBusInfo.clear()
-
-    #No busses en-route
-    logger.info('No buses en route..')
-    GCD.nobus()
+    #Wait and check route again
     time.sleep(10)
+    nextBusInfo.clear()
