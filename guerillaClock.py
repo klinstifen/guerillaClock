@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('--%(levelname)s--%(message)s')
 #file handler
-fileHandler = logging.FileHandler('guerillaclock.log')
+fileHandler = logging.FileHandler('guerillaClock.log')
 fileHandler.setFormatter(formatter)
 logger.addHandler(fileHandler)
 #Disable requests logging unless 'warning'
@@ -72,7 +72,6 @@ while True:
                     timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
                     arrivalTime = str(timeTillDepart.seconds // 60 % 60) + " min."
                     logger.info('Bus %s Arrives in: %s', busRef, arrivalTime)
-                    #GCD.show(routeName,arrivalTime)
                     continue
                 else:
                     logger.info('Bus %s: Not en-route (%s)', busRef, bus['MonitoredVehicleJourney']['ProgressStatus'])
