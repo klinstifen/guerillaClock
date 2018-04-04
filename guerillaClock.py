@@ -12,7 +12,7 @@ import logging
 
 #Config logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('--%(levelname)s--%(message)s')
 #file handler
 fileHandler = logging.FileHandler('guerillaClock.log')
@@ -82,7 +82,10 @@ while True:
             logger.debug('Bus %s Stops Away: %s', busRef, stopsAway)
             expectedArrivalTime = bus['MonitoredVehicleJourney']['MonitoredCall'].get('ExpectedArrivalTime')
             logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
-            timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
+            try:
+                timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
+            except:
+                logger.debug('ERROR: Expected Arrival Time not found (%s)', expectedArrivalTime)
             arrivalTime = str(timeTillDepart.seconds // 60 % 60) + " min."
 
             if len(nextBusInfo):
