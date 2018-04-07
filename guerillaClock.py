@@ -19,7 +19,7 @@ GPIO.setup(PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #Config logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 formatter = logging.Formatter('--%(levelname)s--%(message)s')
 #file handler
 fileHandler = logging.FileHandler('guerillaClock.log')
