@@ -123,6 +123,7 @@ while True:
     nextBusInfo.clear()
 
     #Check for low power
+    logger.info('GPIO pin status: %s',GPIO.input(PIN))
     if not GPIO.input(PIN):
       logger.debug("Low Battery Power Detected.  Shutting down...")
       GCD.off()
