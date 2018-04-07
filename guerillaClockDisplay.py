@@ -59,3 +59,6 @@ class guerillaClockDisplay(object):
 
           time.sleep(0.05)
           self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
+
+    def off(self):
+        self.offscreen_canvas.Clear()
