@@ -9,6 +9,8 @@ The Raspberry Pi Zero W connects to a local wifi network and pulls bus arrival t
 
 The display is controlled with hzeller's great [rpi-rgb-led-matrix repo](https://github.com/hzeller/rpi-rgb-led-matrix) project.  The [wiring.md](https://github.com/hzeller/rpi-rgb-led-matrix/blob/master/wiring.md) was especially helpful in creating a Pi HAT, utilizing the [Adafruit Perma Proto Bonnet](https://www.adafruit.com/product/3203).
 
+More information can be found on [hackaday.io](https://hackaday.io/project/25073-guerillaclock).
+
 ## Files
 * **README.md**: This file.
 * **guerillaClock.py**: Scrape the NYC MTA Bus Time API and gather information about a designated bus stop.
