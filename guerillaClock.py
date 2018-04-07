@@ -9,6 +9,13 @@ from time import strftime
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 from guerillaClockDisplay import *
 import logging
+import RPi.GPIO as GPIO
+import os
+
+#LBO shutdown PIN
+PIN = 21
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #Config logging
 logger = logging.getLogger(__name__)
@@ -114,3 +121,9 @@ while True:
     #Wait and check route again
     time.sleep(10)
     nextBusInfo.clear()
+
+    #Check for low power
+    if not GPIO.input(PIN):
+      logger.debug("Low Battery Power Detected.  Shutting down...")
+      GCD.off()
+      os.system("sudo shutdown -h now")
