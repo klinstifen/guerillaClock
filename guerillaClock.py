@@ -131,4 +131,4 @@ while True:
     if not GPIO.input(PIN):
       logger.warning("Low Battery Power Detected.  Shutting down...")
       GCD.off()
-      os.system("shutdown --poweroff")
+      os.system("sudo shutdown --poweroff")
