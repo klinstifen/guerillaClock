@@ -15,7 +15,7 @@ import os
 #LBO shutdown PIN
 PIN = 21
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #Config logging
 logger = logging.getLogger(__name__)
