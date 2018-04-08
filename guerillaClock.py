@@ -57,7 +57,11 @@ while True:
     except:
         logger.debug('ERROR: Could not connect to API. Retrying...')
         continue
-    jsonData = response.json()
+    try:
+        jsonData = response.json()
+    except:
+        logger.debug('ERROR: Could not load API response.  Retrying...')
+        continue
     logger.debug('Raw JSON: %s', jsonData)
     busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
     bussesEnroute = len(busStopData[0]['MonitoredStopVisit'])
