@@ -10,7 +10,7 @@ class guerillaClockDisplay(object):
         self.options.parallel = 1
         self.options.hardware_mapping = 'regular'  # If you have an Adafruit HAT: 'adafruit-hat'
         self.font = graphics.Font()
-        self.font.LoadFont("../../fonts/5x8.bdf")
+        self.font.LoadFont("rpi-rgb-led-matrix/fonts/5x8.bdf")
         self.textColor = graphics.Color(255, 0, 0)
     def initiate(self):
         self.matrix = RGBMatrix(options = self.options)
