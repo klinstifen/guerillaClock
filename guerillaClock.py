@@ -81,7 +81,7 @@ while True:
                     expectedArrivalTime = bus['MonitoredVehicleJourney']['OriginAimedDepartureTime']
                     logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
                     timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
-                    arrivalTime = str(timeTillDepart.seconds // 60 % 60) + " min."
+                    arrivalTime = timeTillDepart.seconds // 60 % 60
                     logger.info('Bus %s Arrives in: %s', busRef, arrivalTime)
                     continue
                 else:
@@ -97,7 +97,7 @@ while True:
                 timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
             except:
                 logger.debug('ERROR: Expected Arrival Time not found (%s)', expectedArrivalTime)
-            arrivalTime = str(timeTillDepart.seconds // 60 % 60) + " min."
+            arrivalTime = timeTillDepart.seconds // 60 % 60
 
             if len(nextBusInfo):
                 logger.info('(nextBusInfo) %s arrival time is: %s', nextBusInfo["nBusId"],nextBusInfo["nArrivalTime"])
@@ -107,13 +107,13 @@ while True:
             else:
                 nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
 
-            logger.info('Bus %s Arrives in: %s', busRef, arrivalTime)
+            logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
         if len(nextBusInfo):
             #Reword if bus has arrived
             if distanceAway == 'at stop':
                 nextBusInfo['nArrivalTime'] = 'Here!'
             logger.info('!!!!!!!!!!!!!!!!')
-            logger.info('Next Bus Arrives In: %s', nextBusInfo['nArrivalTime'])
+            logger.info('Next Bus Arrives In: %s min.', nextBusInfo['nArrivalTime'])
             logger.info('!!!!!!!!!!!!!!!!')
             GCD.show(nextBusInfo["route"],nextBusInfo["nArrivalTime"])
         else:
