@@ -100,6 +100,8 @@ while True:
             arrivalTime = str(timeTillDepart.seconds // 60 % 60) + " min."
 
             if len(nextBusInfo):
+                logger.info('(nextBusInfo) %s arrival time is: %s', nextBusInfo["nBusID"],nextBusInfo["nArrivalTime"])
+                logger.info('(current loop bus) %s arrival time is: %s', busID, arrivalTime)
                 if arrivalTime < nextBusInfo["nArrivalTime"]:
                     nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
             else:
