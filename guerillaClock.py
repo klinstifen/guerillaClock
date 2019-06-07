@@ -82,7 +82,7 @@ while True:
                     logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
                     timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
                     arrivalTime = timeTillDepart.seconds // 60 % 60
-                    logger.info('Bus %s Arrives in: %s', busRef, arrivalTime)
+                    logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
                     continue
                 else:
                     logger.info('Bus %s: Not en-route (%s)', busRef, bus['MonitoredVehicleJourney']['ProgressStatus'])
@@ -107,7 +107,7 @@ while True:
 
             logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
         if len(nextBusInfo):
-            nextBusInfo['nArrivalTime'] = str(nextBusInfo['nArrivalTime']) + 'min.'
+            nextBusInfo['nArrivalTime'] = str(nextBusInfo['nArrivalTime']) + ' min.'
             #Reword if bus has arrived
             if distanceAway == 'at stop':
                 nextBusInfo['nArrivalTime'] = 'Here!'
