@@ -17,7 +17,11 @@ class guerillaClockDisplay(object):
         self.offscreen_canvas = self.matrix.CreateFrameCanvas()
 
     def nobus(self):
-        self.set("BUSES AT TERMINAL - STANDBY FOR NEXT BUS.")
+        self.msg = "BUSES AT TERMINAL - STANDBY FOR NEXT BUS."
+        self.scroll()
+
+    def announce(self, m):
+        self.msg = m
         self.scroll()
 
     def set(self, m):
