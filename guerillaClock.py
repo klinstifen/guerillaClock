@@ -107,12 +107,14 @@ while True:
 
             logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
         if len(nextBusInfo):
+            nextBusInfo['nArrivalTime'] = str(nextBusInfo['nArrivalTime']) + 'min.'
             #Reword if bus has arrived
             if distanceAway == 'at stop':
                 nextBusInfo['nArrivalTime'] = 'Here!'
             logger.info('!!!!!!!!!!!!!!!!')
-            logger.info('Next Bus Arrives In: %s min.', nextBusInfo['nArrivalTime'])
+            logger.info('Next Bus Arrives In: %s', nextBusInfo['nArrivalTime'])
             logger.info('!!!!!!!!!!!!!!!!')
+
             GCD.show(nextBusInfo["route"],nextBusInfo["nArrivalTime"])
         else:
             logger.info('No busses en route...')
