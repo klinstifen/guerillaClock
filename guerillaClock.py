@@ -57,7 +57,7 @@ annouceTimer = 0
 waitTimer = 0
 while True:
     if timer() > annouceTimer:
-        GCD.annouce('@techahoynyc - www.techahoy.org')
+        GCD.announce('@techahoynyc - www.techahoy.org')
         annouceTimer = timer() + annouceDelay
     if timer() > waitTimer:
         logger.info('Retrieving bus stop info...')
