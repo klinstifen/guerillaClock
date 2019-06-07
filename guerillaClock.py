@@ -6,6 +6,7 @@ from datetime import datetime
 import dateutil.parser
 import pytz
 from time import strftime
+from timeit import default_timer as timer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 from guerillaClockDisplay import *
 import logging
@@ -50,87 +51,95 @@ logger.info('Initiating GCD...')
 GCD.initiate()
 nextBusInfo = {}
 logger.info('Begin main loop...')
+annouceDelay = 120 #seconds
+waitDelay = 10 #seconds
+annouceTimer = 0
+waitTimer = 0
 while True:
-    logger.info('Retrieving bus stop info...')
-    try:
-        response = requests.get(url)
-    except:
-        logger.debug('ERROR: Could not connect to API. Retrying...')
-        continue
-    try:
-        jsonData = response.json()
-    except:
-        logger.debug('ERROR: Could not load API response.  Retrying...')
-        continue
-    logger.debug('Raw JSON: %s', jsonData)
-    busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
-    bussesEnroute = len(busStopData[0]['MonitoredStopVisit'])
-    logger.info('Number of buses: %s', str(bussesEnroute))
+    if timer() > annouceTimer:
+        GCD.annouce('@techahoynyc - www.techahoy.org')
+        annouceTimer = timer() + annouceDelay
+    if timer() > waitTimer:
+        logger.info('Retrieving bus stop info...')
+        try:
+            response = requests.get(url)
+        except:
+            logger.debug('ERROR: Could not connect to API. Retrying...')
+            continue
+        try:
+            jsonData = response.json()
+        except:
+            logger.debug('ERROR: Could not load API response.  Retrying...')
+            continue
+        logger.debug('Raw JSON: %s', jsonData)
+        busStopData = jsonData['Siri']['ServiceDelivery']['StopMonitoringDelivery']
+        bussesEnroute = len(busStopData[0]['MonitoredStopVisit'])
+        logger.info('Number of buses: %s', str(bussesEnroute))
 
-    #Check if buses en-route
-    if bussesEnroute > 0:
-        logger.info('Looping through buses...')
-        for bus in busStopData[0]['MonitoredStopVisit']:
-            routeName = bus['MonitoredVehicleJourney']['PublishedLineName']
-            busRef = bus['MonitoredVehicleJourney']['VehicleRef']
-            busID = busRef.split("_") #busRef[1] = busID
-            logger.debug('----- Bus %s -----', busRef)
-            #Bus has passed stop or is on layover
-            if 'ProgressStatus' in bus['MonitoredVehicleJourney']:
-                if bus['MonitoredVehicleJourney']['ProgressStatus'].find('layover'):
-                    expectedArrivalTime = bus['MonitoredVehicleJourney']['OriginAimedDepartureTime']
-                    logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
+        #Check if buses en-route
+        if bussesEnroute > 0:
+            logger.info('Looping through buses...')
+            for bus in busStopData[0]['MonitoredStopVisit']:
+                routeName = bus['MonitoredVehicleJourney']['PublishedLineName']
+                busRef = bus['MonitoredVehicleJourney']['VehicleRef']
+                busID = busRef.split("_") #busRef[1] = busID
+                logger.debug('----- Bus %s -----', busRef)
+                #Bus has passed stop or is on layover
+                if 'ProgressStatus' in bus['MonitoredVehicleJourney']:
+                    if bus['MonitoredVehicleJourney']['ProgressStatus'].find('layover'):
+                        expectedArrivalTime = bus['MonitoredVehicleJourney']['OriginAimedDepartureTime']
+                        logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
+                        timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
+                        arrivalTime = timeTillDepart.seconds // 60 % 60
+                        logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
+                        continue
+                    else:
+                        logger.info('Bus %s: Not en-route (%s)', busRef, bus['MonitoredVehicleJourney']['ProgressStatus'])
+                        continue
+                distanceAway = bus['MonitoredVehicleJourney']['MonitoredCall']['Extensions']['Distances']['PresentableDistance']
+                logger.debug('Bus %s Distance Away: %s', busRef, distanceAway)
+                stopsAway = str(bus['MonitoredVehicleJourney']['MonitoredCall']['Extensions']['Distances']['StopsFromCall'])
+                logger.debug('Bus %s Stops Away: %s', busRef, stopsAway)
+                expectedArrivalTime = bus['MonitoredVehicleJourney']['MonitoredCall'].get('ExpectedArrivalTime')
+                logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
+                try:
                     timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
-                    arrivalTime = timeTillDepart.seconds // 60 % 60
-                    logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
-                    continue
+                except:
+                    logger.debug('ERROR: Expected Arrival Time not found (%s)', expectedArrivalTime)
+                arrivalTime = timeTillDepart.seconds // 60 % 60
+
+                if len(nextBusInfo):
+                    if arrivalTime < nextBusInfo["nArrivalTime"]:
+                        nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
                 else:
-                    logger.info('Bus %s: Not en-route (%s)', busRef, bus['MonitoredVehicleJourney']['ProgressStatus'])
-                    continue
-            distanceAway = bus['MonitoredVehicleJourney']['MonitoredCall']['Extensions']['Distances']['PresentableDistance']
-            logger.debug('Bus %s Distance Away: %s', busRef, distanceAway)
-            stopsAway = str(bus['MonitoredVehicleJourney']['MonitoredCall']['Extensions']['Distances']['StopsFromCall'])
-            logger.debug('Bus %s Stops Away: %s', busRef, stopsAway)
-            expectedArrivalTime = bus['MonitoredVehicleJourney']['MonitoredCall'].get('ExpectedArrivalTime')
-            logger.debug('Bus %s Expected Arrival Time: %s',busRef, expectedArrivalTime)
-            try:
-                timeTillDepart =  dateutil.parser.parse(expectedArrivalTime) - datetime.now(pytz.utc)
-            except:
-                logger.debug('ERROR: Expected Arrival Time not found (%s)', expectedArrivalTime)
-            arrivalTime = timeTillDepart.seconds // 60 % 60
-
-            if len(nextBusInfo):
-                if arrivalTime < nextBusInfo["nArrivalTime"]:
                     nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
+
+                logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
+            if len(nextBusInfo):
+                nextBusInfo['nArrivalTime'] = str(nextBusInfo['nArrivalTime']) + ' min.'
+                #Reword if bus has arrived
+                if distanceAway == 'at stop':
+                    nextBusInfo['nArrivalTime'] = 'Here!'
+                logger.info('!!!!!!!!!!!!!!!!')
+                logger.info('Next Bus Arrives In: %s', nextBusInfo['nArrivalTime'])
+                logger.info('!!!!!!!!!!!!!!!!')
+
+                GCD.show(nextBusInfo["route"],nextBusInfo["nArrivalTime"])
             else:
-                nextBusInfo = {"route": routeName, "nBusId": busID, "nArrivalTime": arrivalTime}
+                logger.info('No busses en route...')
+                GCD.nobus()
 
-            logger.info('Bus %s Arrives in: %s min.', busRef, arrivalTime)
-        if len(nextBusInfo):
-            nextBusInfo['nArrivalTime'] = str(nextBusInfo['nArrivalTime']) + ' min.'
-            #Reword if bus has arrived
-            if distanceAway == 'at stop':
-                nextBusInfo['nArrivalTime'] = 'Here!'
-            logger.info('!!!!!!!!!!!!!!!!')
-            logger.info('Next Bus Arrives In: %s', nextBusInfo['nArrivalTime'])
-            logger.info('!!!!!!!!!!!!!!!!')
-
-            GCD.show(nextBusInfo["route"],nextBusInfo["nArrivalTime"])
         else:
-            logger.info('No busses en route...')
+            logger.info('No buses en route..')
             GCD.nobus()
 
-    else:
-        logger.info('No buses en route..')
-        GCD.nobus()
+        #Reset and wait
+        nextBusInfo.clear()
+        waitTimer = timer() + waitDelay
 
-    #Wait and check route again
-    time.sleep(10)
-    nextBusInfo.clear()
-
-    #Check for low power
-    logger.info('LBO Status: %s',GPIO.input(PIN))
-    if not GPIO.input(PIN):
-      logger.warning("Low Battery Power Detected.  Shutting down...")
-      GCD.off()
-      os.system("sudo shutdown --poweroff")
+        #Check for low power
+        logger.info('LBO Status: %s',GPIO.input(PIN))
+        if not GPIO.input(PIN):
+          logger.warning("Low Battery Power Detected.  Shutting down...")
+          GCD.off()
+          os.system("sudo shutdown --poweroff")
